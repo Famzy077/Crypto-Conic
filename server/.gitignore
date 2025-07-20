@@ -1,0 +1,6 @@
+# Nodemon Packages 
+node_modules
+package-lock.json
+
+# Environments Variable
+.env

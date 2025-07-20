@@ -1,0 +1,16 @@
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  holdings  Holding[]
+}
+
+model Holding {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  coinId    String   // e.g., "bitcoin", "ethereum"
+  quantity  Float    // e.g., 0.5
+  buyPrice  Float    // The price the user bought it at
+}
