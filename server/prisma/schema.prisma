@@ -1,3 +1,12 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 model User {
   id        String    @id @default(uuid())
   email     String    @unique
@@ -10,7 +19,7 @@ model Holding {
   userId    String
   user      User     @relation(fields: [userId], references: [id])
 
-  coinId    String   // e.g., "bitcoin", "ethereum"
-  quantity  Float    // e.g., 0.5
-  buyPrice  Float    // The price the user bought it at
+  coinId    String  
+  quantity  Float   
+  buyPrice  Float 
 }
