@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+:root{
+  --primary: rgb(4, 153, 146);
+}
+body{
+  color: var(--primary)
+}
