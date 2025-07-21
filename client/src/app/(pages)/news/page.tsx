@@ -7,7 +7,7 @@ export default async function NewsPage() {
     const initialNews = await getCryptoNews();
 
     return (
-        <main className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+        <main className="bg-gray-50 mt-18 max-sm:mt-14 dark:bg-gray-900 min-h-screen">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">Crypto News</h1>

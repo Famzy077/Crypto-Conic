@@ -1,96 +1,3 @@
-// 'use client';
-
-// import React from 'react';
-// import { useQuery } from '@tanstack/react-query';
-// import { getTopCoins } from '../../lib/coingecko';
-// import { useRouter } from 'next/navigation';
-// import Image from 'next/image';
-// import { FaSpinner } from 'react-icons/fa';
-
-// // --- A reusable component for a single Crypto Card ---
-// const CryptoCard = ({ coin }) => {
-//     const router = useRouter();
-//     const priceChange = coin.price_change_percentage_24h;
-
-//     return (
-//         <div 
-//             onClick={() => router.push(`/coins/${coin.id}`)}
-//             className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
-//         >
-//             <div className="flex items-center gap-4 mb-4">
-//                 <Image src={coin.image} alt={coin.name} width={40} height={40} className="rounded-full" />
-//                 <div>
-//                     <p className="font-bold text-lg text-gray-800 dark:text-white">{coin.name}</p>
-//                     <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">{coin.symbol}</p>
-//                 </div>
-//             </div>
-//             <div>
-//                 <p className="text-2xl font-bold text-gray-900 dark:text-gray-200">
-//                     ${coin.current_price.toLocaleString()}
-//                 </p>
-//                 <p className={`text-md font-semibold mt-1 ${priceChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
-//                     {priceChange > 0 ? '▲' : '▼'} {priceChange.toFixed(2)}%
-//                 </p>
-//             </div>
-//         </div>
-//     );
-// };
-
-// // --- A component for the loading skeleton ---
-// const GridSkeleton = () => (
-//     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-//         {[...Array(10)].map((_, i) => (
-//             <div key={i} className="animate-pulse bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-//                 <div className="flex items-center gap-4 mb-4">
-//                     <div className="h-10 w-10 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
-//                     <div className="flex-1 space-y-2">
-//                         <div className="h-5 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
-//                         <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
-//                     </div>
-//                 </div>
-//                 <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
-//                 <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/4 mt-2"></div>
-//             </div>
-//         ))}
-//     </div>
-// );
-
-
-// // --- The Main Home Page Component ---
-// const HomePage = () => {
-//     const { data: coins, isLoading, error } = useQuery({
-//         queryKey: ['topCoins'],
-//         queryFn: getTopCoins,
-//     });
-
-//     return (
-//         <main className="bg-gray-50 dark:bg-gray-900 min-h-screen">
-//             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-//                 <div className="text-center mb-12">
-//                     <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">Crypto Market Tracker</h1>
-//                     <p className="text-lg text-gray-500 dark:text-gray-400 mt-2">
-//                         Live prices for the top 100 cryptocurrencies.
-//                     </p>
-//                 </div>
-
-//                 {isLoading && <GridSkeleton />}
-//                 {error && <div className="p-8 text-center text-red-500">Failed to load data. Please try again later.</div>}
-                
-//                 {!isLoading && !error && (
-//                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-//                         {coins?.map((coin) => (
-//                             <CryptoCard key={coin.id} coin={coin} />
-//                         ))}
-//                     </div>
-//                 )}
-//             </div>
-//         </main>
-//     );
-// };
-
-// export default HomePage;
-
-
 'use client';
 
 import React from 'react';
@@ -124,7 +31,7 @@ const CryptoCard = ({ coin }: { coin: Coin }) => {
             <div className="flex items-center gap-4 mb-4">
                 <Image src={coin.image} alt={coin.name} width={40} height={40} className="rounded-full" />
                 <div>
-                    <p className="font-bold text-lg text-gray-800 dark:text-white">{coin.name}</p>
+                    <p className="font-bold text-lg max-sm:text-sm text-gray-800 dark:text-white">{coin.name}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">{coin.symbol}</p>
                 </div>
             </div>
@@ -180,11 +87,11 @@ const HomePage = () => {
     });
 
     return (
-        <main className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+        <main className="bg-gray-50 mt-18 max-sm:mt-14 pt-5  dark:bg-gray-900 min-h-screen">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-2">
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">Crypto Market Tracker</h1>
-                    <p className="text-lg text-gray-500 dark:text-gray-400 mt-2">
+                    <h1 className="text-4xl max-sm:text-2xl md:text-5xl font-bold text-gray-800 dark:text-white">Crypto Market Overview</h1>
+                    <p className="text-lg max-sm:text-sm text-gray-500 dark:text-gray-400 mt-2">
                         Live prices for the top cryptocurrencies.
                     </p>
                 </div>

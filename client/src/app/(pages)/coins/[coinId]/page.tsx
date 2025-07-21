@@ -5,6 +5,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getCoinDetails } from '@/app/lib/coingecko';
 import { useParams, useRouter } from 'next/navigation';
+import type { CoinDetails } from '@/app/lib/coingecko';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 
@@ -29,14 +30,18 @@ const DetailsSkeleton = () => (
 );
 
 // --- The Main Coin Details Page Component ---
+
 const CoinDetailsPage = () => {
     const params = useParams();
     const router = useRouter();
     const coinId = params.coinId as string;
 
-    const { data: coin, isLoading, error } = useQuery({
+    const { data: coin, isLoading, error } = useQuery<CoinDetails>({
         queryKey: ['coinDetails', coinId],
-        queryFn: () => getCoinDetails(coinId),
+        queryFn: async () => {
+            const result = await getCoinDetails(coinId);
+            return result as CoinDetails;
+        },
         enabled: !!coinId, // Only run the query if coinId exists
     });
 
@@ -49,10 +54,12 @@ const CoinDetailsPage = () => {
     }
 
     // Sanitize the description HTML to prevent XSS attacks
-    const cleanDescription = coin.description?.en.replace(/<a/g, '<a target="_blank" rel="noopener noreferrer"');
+    const cleanDescription = coin.description?.en
+        ? coin.description['en'].replace(/<a/g, '<a target="_blank" rel="noopener noreferrer"')
+        : '';
 
     return (
-        <main className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+        <main className="bg-gray-50 mt-18 max-sm:mt-14 dark:bg-gray-900 min-h-screen">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <button 
                     onClick={() => router.back()}
@@ -89,11 +96,19 @@ const CoinDetailsPage = () => {
                                 </div>
                                 <div>
                                     <p className="text-gray-500 dark:text-gray-400">24h High</p>
-                                    <p className="font-semibold text-green-500">${coin.market_data.high_24h.usd.toLocaleString()}</p>
+                                    <p className="font-semibold text-green-500">
+                                        ${typeof coin.market_data.high_24h === 'object' && coin.market_data.high_24h !== null && 'usd' in coin.market_data.high_24h
+                                            ? (coin.market_data.high_24h as { usd: number }).usd.toLocaleString()
+                                            : 'N/A'}
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-gray-500 dark:text-gray-400">24h Low</p>
-                                    <p className="font-semibold text-red-500">${coin.market_data.low_24h.usd.toLocaleString()}</p>
+                                    <p className="font-semibold text-red-500">
+                                        ${typeof coin.market_data.low_24h === 'object' && coin.market_data.low_24h !== null && 'usd' in coin.market_data.low_24h
+                                            ? (coin.market_data.low_24h as { usd: number }).usd.toLocaleString()
+                                            : 'N/A'}
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-gray-500 dark:text-gray-400">Total Volume</p>
@@ -101,11 +116,19 @@ const CoinDetailsPage = () => {
                                 </div>
                                 <div>
                                     <p className="text-gray-500 dark:text-gray-400">Circulating Supply</p>
-                                    <p className="font-semibold text-gray-800 dark:text-gray-200">{coin.market_data.circulating_supply.toLocaleString()}</p>
+                                    <p className="font-semibold text-gray-800 dark:text-gray-200">
+                                        {typeof coin.market_data.circulating_supply === 'number'
+                                            ? coin.market_data.circulating_supply.toLocaleString()
+                                            : 'N/A'}
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-gray-500 dark:text-gray-400">All-Time High</p>
-                                    <p className="font-semibold text-gray-800 dark:text-gray-200">${coin.market_data.ath.usd.toLocaleString()}</p>
+                                    <p className="font-semibold text-gray-800 dark:text-gray-200">
+                                        ${typeof coin.market_data.ath === 'object' && coin.market_data.ath !== null && 'usd' in coin.market_data.ath
+                                            ? (coin.market_data.ath as { usd: number }).usd.toLocaleString()
+                                            : 'N/A'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
