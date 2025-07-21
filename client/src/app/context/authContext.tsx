@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         localStorage.setItem('authToken', urlToken);
         setToken(urlToken);
         axios.defaults.headers.common['Authorization'] = `Bearer ${urlToken}`;
-        router.replace('/dashboard'); // Clean the URL
+        router.replace('/home'); // Clean the URL
     } else {
         // Priority 2: Handle existing token from a previous session
         const storedToken = localStorage.getItem('authToken');
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       localStorage.setItem('authToken', token);
       setToken(token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      router.push('/dashboard'); // Redirect to dashboard after successful registration
+      router.push('/home'); // Redirect to home  after successful registration
     } catch (error) {
       console.error('Registration failed:', error);
 
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       localStorage.setItem('authToken', token);
       setToken(token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      router.push('/dashboard'); // Redirect to dashboard after successful login
+      router.push('/home'); // Redirect to home after successful login
     } catch (error) {
       console.error('Login failed:', error);
     }

@@ -5,7 +5,7 @@ import { useAuth } from '@/app/context/authContext';
 import logoImg  from '../../../../public/image/image-removebg-preview (8).png';
 import Image from 'next/image';
 import { LogOut } from 'lucide-react';
-const Header = () => {
+const NavBar = () => {
   const { token, logoutUser } = useAuth();
 
   return (
@@ -50,4 +50,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default NavBar;

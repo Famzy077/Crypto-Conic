@@ -3,7 +3,7 @@ import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import Image from 'next/image';
 import logoImg from '../../../../public/image/image-removebg-preview (8).png';
 
-const Footer = () => {
+const Footers = () => {
   return (
     <footer className="bg-gray-800 text-gray-400 py-8">
       <div className="container mx-auto px-4">
@@ -43,4 +43,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default Footers;
