@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/app/context/authContext';
-import logoImg  from '../../../../public/image/image-removebg-preview (8).png';
+import logoImg  from '../../../../public/image/logo.png';
 import Image from 'next/image';
 import { LogOut } from 'lucide-react';
 const NavBar = () => {

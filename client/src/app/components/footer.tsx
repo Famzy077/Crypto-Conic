@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import Image from 'next/image';
-import logoImg from '../../../../public/image/image-removebg-preview (8).png';
+import logoImg from '../../../../public/image/logo.png';
 
 const Footers = () => {
   return (
