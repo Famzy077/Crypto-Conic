@@ -1,14 +1,22 @@
 'use client';
+
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+import { AuthTokenHandler } from './AuthTokenHandler';
+
+// Define the shape of the form data for type safety
+type AuthFormData = {
+  email?: string;
+  password?: string;
+};
 
 // Define the shape of the context data
 interface AuthContextType {
   token: string | null;
-  registerUser: (formData: Record<string, unknown>) => Promise<void>;
-  loginUser: (formData: Record<string, unknown>) => Promise<void>;
+  setAuthToken: (newToken: string) => void;
+  registerUser: (formData: AuthFormData) => Promise<void>;
+  loginUser: (formData: AuthFormData) => Promise<void>;
   logoutUser: () => void;
 }
 
@@ -21,73 +29,63 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-    
-    const [token, setToken] = useState<string | null>(null);
-    const searchParams = useSearchParams();
-    const router = useRouter();
-    
-    // Inside the AuthProvider component
-    useEffect(() => {
-    const urlToken = searchParams.get('token');
+  const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
 
-    if (urlToken) {
-        // Priority 1: Handle token from Google redirect
-        localStorage.setItem('authToken', urlToken);
-        setToken(urlToken);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${urlToken}`;
-        router.replace('/home'); // Clean the URL
-    } else {
-        // Priority 2: Handle existing token from a previous session
-        const storedToken = localStorage.getItem('authToken');
-        if (storedToken) {
-        setToken(storedToken);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-        }
+  // Helper function to set the token everywhere it's needed
+  const setAuthToken = (newToken: string) => {
+    setToken(newToken);
+    localStorage.setItem('authToken', newToken);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+  };
+
+  // This effect now ONLY checks localStorage on initial load
+  useEffect(() => {
+    const storedToken = localStorage.getItem('authToken');
+    if (storedToken) {
+      setToken(storedToken);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
     }
-    }, [searchParams, router]);
-
+  }, []);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const registerUser = async (formData: Record<string, unknown>) => {
+
+  const registerUser = async (formData: AuthFormData) => {
     try {
       const response = await axios.post(`${API_URL}/api/auth/register`, formData);
-      const { token } = response.data;
-      localStorage.setItem('authToken', token);
-      setToken(token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      router.push('/home'); // Redirect to home  after successful registration
+      const { token: newToken } = response.data;
+      setAuthToken(newToken);
+      router.push('/dashboard'); 
     } catch (error) {
       console.error('Registration failed:', error);
-
-      // Here I would typically set an error state to show to the user
-      
+      throw error; // Re-throw error to be caught by the component
     }
   };
 
-  const loginUser = async (formData: Record<string, unknown>) => {
+  const loginUser = async (formData: AuthFormData) => {
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, formData);
-      const { token } = response.data;
-      localStorage.setItem('authToken', token);
-      setToken(token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      router.push('/home'); // Redirect to home after successful login
+      const { token: newToken } = response.data;
+      setAuthToken(newToken);
+      router.push('/dashboard');
     } catch (error) {
       console.error('Login failed:', error);
+      throw error; // Re-throw error to be caught by the component
     }
   };
 
   const logoutUser = () => {
-    localStorage.removeItem('authToken');
     setToken(null);
+    localStorage.removeItem('authToken');
     delete axios.defaults.headers.common['Authorization'];
     router.push('/login');
   };
   
-  const contextValue = { token, registerUser, loginUser, logoutUser };
+  const contextValue = { token, setAuthToken, registerUser, loginUser, logoutUser };
 
   return (
     <AuthContext.Provider value={contextValue}>
+      <AuthTokenHandler />
       {children}
     </AuthContext.Provider>
   );
