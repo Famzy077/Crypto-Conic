@@ -20,7 +20,7 @@ const register = async (req, res) => {
             data: {email, password: hashedPassword},
         });
 
-        const token = jwt.sign({ userid: user.id}, process.env.JWT_SECRET, {expiresIn: '20d'});
+        const token = jwt.sign({ userId: user.id}, process.env.JWT_SECRET, {expiresIn: '20d'});
         res.status(201).json({ success: true, message: 'User registered successfully.', token });
     } catch (error) {
         console.error("--- Register Error ---", { message: error.message });
