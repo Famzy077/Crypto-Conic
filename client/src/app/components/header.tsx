@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuth } from '@/app/context/authContext';
-import logoImg  from '../../../../public/image/logo.png';
+import { useAuth } from '@/app/context/authContext'
 import Image from 'next/image';
 import { LogOut } from 'lucide-react';
 const NavBar = () => {
@@ -12,7 +11,7 @@ const NavBar = () => {
     <nav className="bg-gray-800 fixed w-[100%] z-10 top-0 left-0 text-white py-0 p-4 shadow-md">
       <div className="lg:container lg:mx-auto flex justify-between items-center">
         <Link href="/" className=" font-bold text-blue-400 flex items-center">
-          <Image src={logoImg} alt='logo' className='max-sm:w-[90px] w-[120px] max-sm:h-[60px] h-[75px]' title='logo image'/>
+          <Image src={'/image/logo.png'} alt='logo' width={100} height={100} className='max-sm:w-[90px] w-[120px] max-sm:h-[60px] h-[75px]' title='logo image'/>
           <h2 className='transform max-sm:hidden text-2xl -translate-x-6'>CryptoCronic</h2>
         </Link>
 

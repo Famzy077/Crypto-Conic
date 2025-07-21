@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import Image from 'next/image';
-import logoImg from '../../../../public/image/logo.png';
 
 const Footers = () => {
   return (
@@ -10,7 +9,7 @@ const Footers = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left md:text-left">
           <div>
             <Link href="/" className=" font-bold text-blue-400 flex items-center">
-              <Image src={logoImg} alt='logo' className='max-sm:w-[90px] w-[120px] max-sm:h-[60px] h-[75px]' title='logo image'/>
+              <Image src={'/image/logo.png'} alt='logo' width={100} height={100} className='max-sm:w-[90px] w-[120px] max-sm:h-[60px] h-[75px]' title='logo image'/>
               <h2 className='transform max-sm text-2xl -translate-x-6'>CryptoCronic</h2>
             </Link>
 
