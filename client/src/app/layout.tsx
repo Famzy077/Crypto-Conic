@@ -6,6 +6,7 @@ import NavBar from "./components/header";
 import Footers from "./components/footer";
 import Providers from './providers';
 import { AuthProvider } from "./context/authContext";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,15 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <Providers>
-            <NavBar/>
-            <Suspense fallback={<div>Loading...</div>}> {/* Or null */}
-            {children}
-            </Suspense>
-            <Footers/>
-          </Providers>
-        </AuthProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AuthProvider>
+            <Providers>
+              <NavBar/>
+              {children}
+              <Footers/>
+            </Providers>
+          </AuthProvider>
+        </Suspense>
       </body>
     </html>
   );
