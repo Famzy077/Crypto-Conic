@@ -16,6 +16,9 @@ const NavBar = () => {
         </Link>
 
         <div className="flex items-center space-x-4">
+          <Link href="/home" className="hover:text-blue-300 transition-colors">
+            Home
+          </Link>
           <Link href="/news" className="hover:text-blue-300 transition-colors">
             News
           </Link>
@@ -30,7 +33,7 @@ const NavBar = () => {
                 onClick={logoutUser} title='logout'
                 className="bg-red-600 hover:bg-red-700 px-3 max-sm:px-2 py-1 rounded-md transition-colors"
               >
-                <LogOut size={26}/>
+                <LogOut className='max-sm:text-xl'/>
               </button>
             </>
           ) : (

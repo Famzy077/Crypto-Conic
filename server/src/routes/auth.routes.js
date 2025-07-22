@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { register, login } = require('../controllers/auth.controller');
+const { register, login, getMe } = require('../controllers/auth.controller');
 const passport = require('passport');
+const {        } = require('../middleware/authMiddleware');
 const jwt = require('jsonwebtoken');
 
 // 1. The route to start the Google login process
@@ -25,5 +26,6 @@ router.get(
 
 router.post('/register', register);
 router.post('/login', login);
+router.get('/me', verifyToken, getMe);
 
 module.exports = router;

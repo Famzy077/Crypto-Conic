@@ -8,29 +8,32 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/api/auth/google/callback', // Must match the one in Google Console
+      callbackURL: '/api/auth/google/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
-      // This function is called after the user grants permission
       try {
         const email = profile.emails[0].value;
+        const name = profile.displayName;
+        const avatarUrl = profile.photos[0].value;
 
-        // Find or create a user in your database
-        let user = await prisma.user.findUnique({ where: { email } });
-
-        if (!user) {
-          // If user doesn't exist, create them.
-          // Note: The password field will be null for OAuth users.
-          user = await prisma.user.create({
-            data: {
-              email: email,
-              // to allow the password field to be nullable.
-              password: null, 
-            },
-          });
-        }
+        // Use `upsert` to find a user or create/update them in one go.
+        // This is more efficient than finding and then creating.
+        const user = await prisma.user.upsert({
+          where: { email: email },
+          update: {
+            // If user exists, update their name and avatar from Google
+            name: name,
+            avatarUrl: avatarUrl,
+          },
+          create: {
+            // If user does not exist, create them with all the details
+            email: email,
+            name: name,
+            avatarUrl: avatarUrl,
+            // password will be null, as configured in the schema
+          },
+        });
         
-        // Pass the user object to the next step
         done(null, user);
       } catch (error) {
         done(error, null);

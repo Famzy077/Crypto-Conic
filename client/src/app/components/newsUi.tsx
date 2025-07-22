@@ -37,7 +37,7 @@ export const NewsArticleCard = ({ article }: { article: NewsArticle }) => (
         </div>
         <div className="p-4">
             <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">{article.source.name}</p>
-            <h3 className="font-bold text-lg text-gray-800 dark:text-white mt-1 max-sm:h-24 place-content-center h-fit overflow-hidden">{article.title}</h3>
+            <h3 className="font-bold text-lg text-gray-800 dark:text-white mt-1 max-sm:h-fit place-content-center h-fit overflow-hidden">{article.title}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 overflow-hidden">{article.summary}</p>
         </div>
     </a>

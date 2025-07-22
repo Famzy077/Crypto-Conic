@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import { useAuth } from '@/app/context/authContext';
 import Image from 'next/image';
+import Link from 'next/link';
 import * as Yup from 'yup';
 import { Toaster, toast } from 'react-hot-toast';
+import axios from 'axios'; // Import axios to check for specific API errors
 
 import GoogleImg from '../../../../public/image/googleIcon.png';
 import loginImage from '../../../../public/image/loginImage3.png';
 import { FaSpinner } from 'react-icons/fa';
 
-// Define the validation schema with Yup
+// Define the validation schema with Yup for the login form
 const loginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email address').required('Email is required'),
   password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
@@ -29,18 +31,19 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setErrors({});
+    setErrors({}); // Clear previous errors on a new submission
 
     try {
+      // 1. Validate form data on the client-side
       await loginSchema.validate({ email, password }, { abortEarly: false });
       
-      // If validation is successful, proceed with login
+      // 2. If validation is successful, proceed with login
       await loginUser({ email, password });
-      toast.success('Login successful!');
+      toast.success('Login successful! Redirecting...');
 
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
-        // Handle Yup validation errors
+        // Handle client-side Yup validation errors
         const yupErrors: { [key: string]: string } = {};
         err.inner.forEach((error) => {
           if (error.path) {
@@ -48,8 +51,14 @@ const LoginPage = () => {
           }
         });
         setErrors(yupErrors);
+      } else if (axios.isAxiosError(err) && err.response) {
+        // Handle specific server-side errors from the API
+        const serverMessage = err.response.data.message || 'Login failed. Please try again.';
+        toast.error(serverMessage); // Show a toast notification with the specific server message
       } else {
-        toast.error('Login failed. Please check your credentials.');
+        // Handle other unexpected errors (e.g., network issues)
+        toast.error('An unexpected error occurred. Please check your connection.');
+        console.error(err);
       }
     } finally {
       setIsLoading(false);
@@ -58,6 +67,7 @@ const LoginPage = () => {
 
   return (
     <>
+      {/* Add the Toaster component to render notifications */}
       <Toaster position="top-right" />
       <div className="flex mt-18 max-sm:mt-14 items-center gap-5 max-sm:px-5 pr-8 justify-between min-h-screen bg-gray-900">
         <div className='max-md:hidden lg:w-[140%]'>
@@ -69,6 +79,10 @@ const LoginPage = () => {
           />
         </div>
         <form onSubmit={handleSubmit} className="p-8 bg-gray-800 rounded-lg shadow-xl container m-auto max-sm:w-[100%] max-md:w-[65%] lg:w-[100%]">
+          <Link href="/" className="font-bold text-blue-400 flex items-center justify-center">
+            <Image src={'/image/logo.png'} alt='logo' width={100} height={100} className='max-sm:w-[90px] w-[120px] max-sm:h-[60px] h-[75px]' title='logo image'/>
+            <h2 className='transform max-sm text-2xl -translate-x-6'>CryptoCronic</h2>
+          </Link>
           <h2 className="text-2xl max-sm:text-xl text-center font-bold text-white">Welcome Back</h2>
           <p className='text-[17px] max-sm:text-sm mb-5 text-center'>Please enter your credentials to login</p>
           
@@ -115,6 +129,12 @@ const LoginPage = () => {
               />
             </div>
           </a>
+          <p className="text-center text-sm text-gray-400 mt-4">
+            Don&apos;t have an account?{' '}
+            <Link href="/register" className="text-blue-400 hover:underline">
+              Register here
+            </Link>
+          </p>
         </form>
       </div>
     </>

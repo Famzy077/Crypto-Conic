@@ -46,5 +46,33 @@ const login = async (req, res) => {
     }
 };
 
+const getMe = async (req, res) => {
+    // The userId is attached by the verifyToken middleware
+    const userId = req.user.userId;
 
-module.exports = { register, login };
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            // Select only the fields that are safe to send to the frontend
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                avatarUrl: true,
+            },
+        });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        res.status(200).json({ success: true, user });
+
+    } catch (error) {
+        console.error("--- Get Me Error ---", error);
+        res.status(500).json({ success: false, message: 'Failed to fetch user profile.' });
+    }
+};
+
+
+module.exports = { register, login, getMe };

@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const response = await axios.post(`${API_URL}/api/auth/register`, formData);
       const { token: newToken } = response.data;
       setAuthToken(newToken);
-      router.push('/dashboard'); 
+      router.push('/home'); 
     } catch (error) {
       console.error('Registration failed:', error);
       throw error; // Re-throw error to be caught by the component
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const response = await axios.post(`${API_URL}/api/auth/login`, formData);
       const { token: newToken } = response.data;
       setAuthToken(newToken);
-      router.push('/dashboard');
+      router.push('/home');
     } catch (error) {
       console.error('Login failed:', error);
       throw error; // Re-throw error to be caught by the component

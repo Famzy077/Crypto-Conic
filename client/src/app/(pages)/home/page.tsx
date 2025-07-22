@@ -31,12 +31,12 @@ const CryptoCard = ({ coin }: { coin: Coin }) => {
             <div className="flex items-center gap-4 mb-4">
                 <Image src={coin.image} alt={coin.name} width={40} height={40} className="rounded-full" />
                 <div>
-                    <p className="font-bold text-lg max-sm:text-sm text-gray-800 dark:text-white">{coin.name}</p>
+                    <p className="font-bold text-lg max-sm:text-[14px] text-gray-800 dark:text-white">{coin.name}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">{coin.symbol}</p>
                 </div>
             </div>
             <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-200">
+                <p className="text-2xl max-sm:text-[20px] font-bold text-gray-900 dark:text-gray-200">
                     ${coin.current_price.toLocaleString()}
                 </p>
                 <p className={`text-md font-semibold mt-1 ${priceChange > 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -102,7 +102,7 @@ const HomePage = () => {
                     <div className="p-8 text-center text-red-500">Error: {error.message}</div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 max-sm:gap-4 gap-6">
                             {/*display all fetched coins */}
                             {data.pages.map((page, i) => (
                                 <React.Fragment key={i}>

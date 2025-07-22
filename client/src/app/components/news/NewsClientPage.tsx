@@ -12,6 +12,7 @@ const NewsClientPage = ({ initialData }: { initialData: NewsArticle[] }) => {
         queryFn: getCryptoNews,
         initialData: initialData,
     });
+    console.log('NewsClientPage rendered with news:', news);
 
     // I can show the skeleton if a background refetch is happening, but not on initial load
     if (isLoading && !news) {

@@ -6,20 +6,21 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
-
 model User {
   id        String    @id @default(uuid())
   email     String    @unique
-  password  String
+  password  String?   // Make password optional for Google Sign-In users
+  name      String?   // New field for the user's name
+  avatarUrl String?   // New field for the profile picture URL
   holdings  Holding[]
 }
 
 model Holding {
-  id        String   @id @default(cuid())
+  id        String @id @default(cuid())
+  user      User   @relation(fields: [userId], references: [id])
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-
-  coinId    String  
-  quantity  Float   
-  buyPrice  Float 
+  
+  coinId    String // The API ID of the coin, e.g., "bitcoin"
+  quantity  Float  // The amount of the coin the user owns
+  buyPrice  Float  // The price the user bought it at
 }
