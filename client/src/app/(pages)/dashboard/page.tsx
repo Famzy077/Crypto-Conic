@@ -106,7 +106,7 @@ const DashboardPage = () => {
 
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold">My Portfolio</h1>
+            <h1 className="text-3xl max-sm:text-2xl font-bold">My Portfolio</h1>
             <p className="text-gray-400">Total Value: <span className="text-green-400 font-semibold">${totalPortfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></p>
           </div>
           <button
@@ -124,7 +124,7 @@ const DashboardPage = () => {
             <p className="text-gray-500 text-sm">Click &quot;Add New Coin &quot;to get started.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto ">
             <table className="min-w-full bg-gray-800 rounded-lg">
               <thead><tr className="border-b border-gray-700"><th className="text-left p-4">Coin</th><th className="text-right p-4">Price</th><th className="text-right p-4">Holdings</th><th className="text-right p-4">P/L</th><th className="text-right p-4">Actions</th></tr></thead>
               <tbody>

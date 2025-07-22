@@ -25,6 +25,7 @@ const getPortfolio = async (req, res) => {
         const livePrices = {};
         const coinsToFetch = [];
 
+        // 1. Check the cache for each coin
         for (const coinId of uniqueCoinIds) {
             const cached = priceCache.get(coinId);
             if (cached && (Date.now() - cached.timestamp < CACHE_DURATION_MS)) {
@@ -34,12 +35,16 @@ const getPortfolio = async (req, res) => {
             }
         }
 
+        // 2. Fetch any coins that were not in the cache or were stale
         if (coinsToFetch.length > 0) {
+            const idsToFetch = coinsToFetch.join(',');
+            const requestUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${idsToFetch}&vs_currencies=usd`;
+            console.log(`--- Making CoinGecko API Request: ${requestUrl} ---`); // ADDED LOGGING
+
             try {
-                const coingeckoResponse = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
-                    params: { ids: coinsToFetch.join(','), vs_currencies: 'usd' },
-                });
+                const coingeckoResponse = await axios.get(requestUrl);
                 const fetchedPrices = coingeckoResponse.data;
+                console.log("--- CoinGecko API Response Received ---", fetchedPrices); // ADDED LOGGING
 
                 // 3. Update cache and merge with other live prices
                 for (const coinId of coinsToFetch) {
@@ -50,10 +55,15 @@ const getPortfolio = async (req, res) => {
                     }
                 }
             } catch (apiError) {
-                console.error("--- CoinGecko API Error ---", apiError.message);
+                console.error("--- CoinGecko API Error ---", { 
+                    message: apiError.message, 
+                    status: apiError.response?.status,
+                    data: apiError.response?.data 
+                });
             }
         }
 
+        // 4. Enrich the portfolio with the combined price data
         const enrichedPortfolio = userHoldings.map(holding => {
             const currentPrice = livePrices[holding.coinId]?.usd || 0;
             const currentValue = holding.quantity * currentPrice;
@@ -71,6 +81,7 @@ const getPortfolio = async (req, res) => {
 };
 
 const addHolding = async (req, res) => {
+    // --- ADDED SAFETY CHECK ---
     const userId = req.user?.userId;
     if (!userId) {
         return res.status(401).json({ success: false, message: 'Invalid token payload.' });

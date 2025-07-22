@@ -42,7 +42,7 @@ export const AddHoldingModal = ({ isOpen, setIsOpen, onHoldingAdded }: { isOpen:
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
         <Transition.Child
-          as={Fragment}
+          as={Fragment} 
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
