@@ -76,7 +76,6 @@ const DashboardPage = () => {
   };
 
   const deleteHolding = async (holdingId: string) => {
-    // ... (deleteHolding function remains the same)
     try {
         const API_URL = process.env.NEXT_PUBLIC_API_URL;
         await axios.delete(`${API_URL}/api/portfolio/holdings/${holdingId}`);
@@ -104,28 +103,27 @@ const DashboardPage = () => {
           <ProfileCard user={user} />
         </div>
 
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex max-sm:flex-wrap max-sm:gap-5 justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl max-sm:text-2xl font-bold">My Portfolio</h1>
             <p className="text-gray-400">Total Value: <span className="text-green-400 font-semibold">${totalPortfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></p>
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
+            className="bg-blue-600 max-sm:text-[16px] hover:bg-blue-700 text-white font-bold py-2 max-sm:px-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
           >
-            <FaPlus /> Add New Coin
+            <FaPlus className='max-sm:text-sm'/> Add New Coin
           </button>
         </div>
 
-        {/* ... (The rest of the table and holdings display remains the same) */}
         {holdings.length === 0 ? (
           <div className="text-center py-10 bg-gray-800 rounded-lg">
             <p className="text-gray-400">Your portfolio is empty.</p>
             <p className="text-gray-500 text-sm">Click &quot;Add New Coin &quot;to get started.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto ">
-            <table className="min-w-full bg-gray-800 rounded-lg">
+          <div className="overflow-x-scroll scrollbar-none">
+            <table className="min-w-full bg-gray-800 rounded-lg overflow-x-scroll scrollbar-none">
               <thead><tr className="border-b border-gray-700"><th className="text-left p-4">Coin</th><th className="text-right p-4">Price</th><th className="text-right p-4">Holdings</th><th className="text-right p-4">P/L</th><th className="text-right p-4">Actions</th></tr></thead>
               <tbody>
                 {holdings.map((h) => (

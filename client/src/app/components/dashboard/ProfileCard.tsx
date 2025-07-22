@@ -25,21 +25,21 @@ const ProfileCard = ({ user }: { user: UserProfile | null }) => {
   }
 
   return (
-    <main className='flex justify-start'>
-        <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
+    <main className='flex justify-start max-sm:justify-'>
+        <div className="bg-gray-800 max-sm:w-full p-8 rounded-lg shadow-lg">
             <div className="flex items-center space-x-4">
-                <Image
-                src={user.avatarUrl || '/default-avatar.png'} // Use a default avatar if none is provided
-                alt={user.name || 'User Avatar'}
-                width={48}
-                height={48}
-                className="rounded-full"
-                onError={(e) => { (e.target as HTMLImageElement).src = '/default-avatar.png'; }}
-                />
-                <div>
-                <h2 className="text-lg font-semibold text-white">{user.name || 'Welcome!'}</h2>
-                <p className="text-sm text-gray-400">{user.email}</p>
-                </div>
+              <Image
+              src={user.avatarUrl || '/default-avatar.png'} // Use a default avatar if none is provided
+              alt={user.name || 'User Avatar'}
+              width={48}
+              height={48}
+              className="rounded-full"
+              onError={(e) => { (e.target as HTMLImageElement).src = '/default-avatar.png'; }}
+              />
+              <div>
+              <h2 className="text-lg font-semibold text-white">{user.name || 'Welcome!'}</h2>
+              <p className="text-sm text-gray-400">{user.email}</p>
+              </div>
             </div>
         </div>
     </main>

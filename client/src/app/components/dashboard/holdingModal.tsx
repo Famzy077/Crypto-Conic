@@ -50,7 +50,7 @@ export const AddHoldingModal = ({ isOpen, setIsOpen, onHoldingAdded }: { isOpen:
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-50" />
+          <div className="fixed inset-0 bg-black/80 bg-opacity-50" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -75,7 +75,7 @@ export const AddHoldingModal = ({ isOpen, setIsOpen, onHoldingAdded }: { isOpen:
                       type="text"
                       value={coinId}
                       onChange={(e) => setCoinId(e.target.value)}
-                      className="mt-1 block w-full rounded-md bg-gray-700 border-transparent focus:border-blue-500 focus:bg-gray-600 focus:ring-0 text-white"
+                      className="mt-1 block w-full rounded-[5px] p-2 bg-gray-700 border-transparent focus:border-blue-500 focus:bg-gray-600 focus:ring-0 text-white"
                       required
                     />
                   </div>
@@ -86,7 +86,7 @@ export const AddHoldingModal = ({ isOpen, setIsOpen, onHoldingAdded }: { isOpen:
                       step="any"
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value)}
-                      className="mt-1 block w-full rounded-md bg-gray-700 border-transparent focus:border-blue-500 focus:bg-gray-600 focus:ring-0 text-white"
+                      className="mt-1 block w-full rounded-[5px] p-2 bg-gray-700 border-transparent focus:border-blue-500 focus:bg-gray-600 focus:ring-0 text-white"
                       required
                     />
                   </div>
@@ -97,7 +97,7 @@ export const AddHoldingModal = ({ isOpen, setIsOpen, onHoldingAdded }: { isOpen:
                       step="any"
                       value={buyPrice}
                       onChange={(e) => setBuyPrice(e.target.value)}
-                      className="mt-1 block w-full rounded-md bg-gray-700 border-transparent focus:border-blue-500 focus:bg-gray-600 focus:ring-0 text-white"
+                      className="mt-1 block w-full rounded-[5px] p-2 bg-gray-700 border-transparent focus:border-blue-500 focus:bg-gray-600 focus:ring-0 text-white"
                       required
                     />
                   </div>

@@ -25,18 +25,17 @@ const getPortfolio = async (req, res) => {
             return res.json([]);
         }
 
-        // --- THE FIX: Fetch all assets and filter, instead of fetching by ID ---
         // 1. Check if the cache is still valid
         if (Date.now() - priceCache.timestamp > CACHE_DURATION_MS) {
             console.log('--- Cache expired. Fetching all assets from CoinCap API. ---');
             try {
                 const requestUrl = `https://api.coincap.io/v2/assets`;
                 const coincapResponse = await axios.get(requestUrl);
-                const fetchedAssets = coincapResponse.data.data; // The assets are in the 'data' array
+                const fetchedAssets = coincapResponse.data.data;
 
-                // Clear the old cache and update it with all new prices
                 priceCache.data.clear();
                 for (const asset of fetchedAssets) {
+                    // All API IDs are lowercase, so we store them that way
                     priceCache.data.set(asset.id, { usd: parseFloat(asset.priceUsd) });
                 }
                 priceCache.timestamp = Date.now();
@@ -47,7 +46,6 @@ const getPortfolio = async (req, res) => {
                     message: apiError.message, 
                     status: apiError.response?.status,
                 });
-                // If the API fails, we can still proceed with the old (stale) cache data if it exists
             }
         } else {
             console.log('--- Using cached prices. ---');
@@ -55,7 +53,10 @@ const getPortfolio = async (req, res) => {
 
         // 2. Enrich the portfolio with the combined price data from our cache
         const enrichedPortfolio = userHoldings.map(holding => {
-            const livePriceData = priceCache.data.get(holding.coinId);
+            // Convert the stored coinId to lowercase before looking it up in the cache.
+            // This ensures "Bitcoin" matches the cache key "bitcoin".
+            const livePriceData = priceCache.data.get(holding.coinId.toLowerCase());
+            
             const currentPrice = livePriceData?.usd || 0;
             const currentValue = holding.quantity * currentPrice;
             const totalProfitLoss = (currentValue - (holding.quantity * holding.buyPrice));
@@ -84,6 +85,7 @@ const addHolding = async (req, res) => {
         const newHolding = await prisma.holding.create({
             data: {
                 userId: userId,
+                // Always save the coinId as lowercase to be consistent
                 coinId: coinId.toLowerCase(),
                 quantity: parseFloat(quantity),
                 buyPrice: parseFloat(buyPrice),
