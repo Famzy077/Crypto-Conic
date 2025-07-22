@@ -18,15 +18,8 @@ passport.use(
 
         const user = await prisma.user.upsert({
           where: { email: email },
-          update: {
-            name: name,
-            avatarUrl: avatarUrl,
-          },
-          create: {
-            email: email,
-            name: name,
-            avatarUrl: avatarUrl,
-          },
+          update: { name: name, avatarUrl: avatarUrl },
+          create: { email: email, name: name, avatarUrl: avatarUrl },
         });
         
         done(null, user);
@@ -36,4 +29,3 @@ passport.use(
     }
   )
 );
-

@@ -1,4 +1,4 @@
-const {PrismaClient} = require('@prisma/client');
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -20,14 +20,14 @@ const register = async (req, res) => {
             data: {email, password: hashedPassword},
         });
 
-        const token = jwt.sign({ userId: user.id}, process.env.JWT_SECRET, {expiresIn: '20d'});
+        // Ensure the JWT payload is consistent with login and Google auth
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {expiresIn: '20d'});
         res.status(201).json({ success: true, message: 'User registered successfully.', token });
     } catch (error) {
         console.error("--- Register Error ---", { message: error.message });
-        res.status(500).json({ success: false, message: 'Internal server error.' });        
+        res.status(500).json({ success: false, message: 'Internal server error.' });       
     }
 }
-
 
 const login = async (req, res) => {
     try {
@@ -46,18 +46,18 @@ const login = async (req, res) => {
     }
 };
 
-
 const getMe = async (req, res) => {
-    const userId = req.user.userId;
+    // Safely access the userId from the request object
+    const userId = req.user?.userId;
+
+    if (!userId) {
+        return res.status(401).json({ success: false, message: 'Invalid token payload.' });
+    }
+
     try {
         const user = await prisma.user.findUnique({
             where: { id: userId },
-            select: {
-                id: true,
-                email: true,
-                name: true,
-                avatarUrl: true,
-            },
+            select: { id: true, email: true, name: true, avatarUrl: true },
         });
 
         if (!user) {
@@ -70,4 +70,8 @@ const getMe = async (req, res) => {
     }
 };
 
-module.exports = { register, login, getMe };
+module.exports = {
+    register,
+    login,
+    getMe,
+};
