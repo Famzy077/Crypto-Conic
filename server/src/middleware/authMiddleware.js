@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
         }
         // Attach the decoded user payload (e.g., { userId: '...' }) to the request object
         req.user = decoded;
-        nect();
+        next();
     })
 }
 module.exports = {verifyToken};
