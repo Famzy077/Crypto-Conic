@@ -1,13 +1,11 @@
-/*
-File: src/controllers/portfolio.controller.js
-Description: The complete, robust portfolio controller using the free CoinCap API.
-*/
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const axios = require('axios');
 
-// In-memory cache to store coin prices.
-const priceCache = new Map();
+const priceCache = {
+    timestamp: 0,
+    data: new Map(),
+};
 const CACHE_DURATION_MS = 5 * 60 * 1000; // Cache prices for 5 minutes
 
 const getPortfolio = async (req, res) => {
@@ -26,49 +24,38 @@ const getPortfolio = async (req, res) => {
             return res.json([]);
         }
 
-        const uniqueCoinIds = [...new Set(userHoldings.map(h => h.coinId))];
-        const livePrices = {};
-        const coinsToFetch = [];
-
-        // 1. Check the cache for each coin
-        for (const coinId of uniqueCoinIds) {
-            const cached = priceCache.get(coinId);
-            if (cached && (Date.now() - cached.timestamp < CACHE_DURATION_MS)) {
-                livePrices[coinId] = cached.data;
-            } else {
-                coinsToFetch.push(coinId);
-            }
-        }
-
-        // 2. Fetch any coins that were not in the cache or were stale
-        if (coinsToFetch.length > 0) {
-            const idsToFetch = coinsToFetch.join(',');
-            // --- THE FIX: Switched to the free and reliable CoinCap API ---
-            const requestUrl = `https://api.coincap.io/v2/assets?ids=${idsToFetch}`;
-            
-            console.log(`--- Making CoinCap API Request: ${requestUrl} ---`);
-
+        // --- THE FIX: Fetch all assets and filter, instead of fetching by ID ---
+        // 1. Check if the cache is still valid
+        if (Date.now() - priceCache.timestamp > CACHE_DURATION_MS) {
+            console.log('--- Cache expired. Fetching all assets from CoinCap API. ---');
             try {
+                const requestUrl = `https://api.coincap.io/v2/assets`;
                 const coincapResponse = await axios.get(requestUrl);
                 const fetchedAssets = coincapResponse.data.data; // The assets are in the 'data' array
 
-                // 3. Update cache and build our price map
+                // Clear the old cache and update it with all new prices
+                priceCache.data.clear();
                 for (const asset of fetchedAssets) {
-                    const priceData = { usd: parseFloat(asset.priceUsd) };
-                    priceCache.set(asset.id, { timestamp: Date.now(), data: priceData });
-                    livePrices[asset.id] = priceData;
+                    priceCache.data.set(asset.id, { usd: parseFloat(asset.priceUsd) });
                 }
+                priceCache.timestamp = Date.now();
+                console.log(`--- Cache updated with ${priceCache.data.size} assets. ---`);
+
             } catch (apiError) {
                 console.error("--- CoinCap API Error ---", { 
                     message: apiError.message, 
                     status: apiError.response?.status,
                 });
+                // If the API fails, we can still proceed with the old (stale) cache data if it exists
             }
+        } else {
+            console.log('--- Using cached prices. ---');
         }
 
-        // 4. Enrich the portfolio with the combined price data
+        // 2. Enrich the portfolio with the combined price data from our cache
         const enrichedPortfolio = userHoldings.map(holding => {
-            const currentPrice = livePrices[holding.coinId]?.usd || 0;
+            const livePriceData = priceCache.data.get(holding.coinId);
+            const currentPrice = livePriceData?.usd || 0;
             const currentValue = holding.quantity * currentPrice;
             const totalProfitLoss = (currentValue - (holding.quantity * holding.buyPrice));
 
