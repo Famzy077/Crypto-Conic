@@ -129,6 +129,8 @@ const DashboardPage = () => {
               <thead><tr className="border-b border-gray-700"><th className="text-left p-4">Coin</th><th className="text-right p-4">Price</th><th className="text-right p-4">Holdings</th><th className="text-right p-4">P/L</th><th className="text-right p-4">Actions</th></tr></thead>
               <tbody>
                 {holdings.map((h) => (
+
+                  console.log(h), // Debugging line to check the structure of holdings
                   <tr key={h.id} className="border-b border-gray-700 hover:bg-gray-700/50">
                     <td className="p-4 font-medium capitalize">{h.coinId}</td>
                     <td className="text-right p-4">${h.currentPrice.toLocaleString()}</td>

@@ -1,13 +1,14 @@
-
+/*
+File: src/controllers/portfolio.controller.js
+Description: The complete, robust portfolio controller using the free CoinCap API.
+*/
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const axios = require('axios');
 
-// --- THE FIX: Caching Layer ---
-// In-memory cache to store coin prices. In a larger application, you might use Redis.
+// In-memory cache to store coin prices.
 const priceCache = new Map();
-// Increased cache duration to 5 minutes to better handle API rate limits.
-const CACHE_DURATION_MS = 5 * 60 * 1000; 
+const CACHE_DURATION_MS = 5 * 60 * 1000; // Cache prices for 5 minutes
 
 const getPortfolio = async (req, res) => {
     const userId = req.user?.userId;
@@ -33,38 +34,34 @@ const getPortfolio = async (req, res) => {
         for (const coinId of uniqueCoinIds) {
             const cached = priceCache.get(coinId);
             if (cached && (Date.now() - cached.timestamp < CACHE_DURATION_MS)) {
-                livePrices[coinId] = cached.data; // Use cached data
+                livePrices[coinId] = cached.data;
             } else {
-                coinsToFetch.push(coinId); // Add to list to fetch from API
+                coinsToFetch.push(coinId);
             }
         }
 
         // 2. Fetch any coins that were not in the cache or were stale
         if (coinsToFetch.length > 0) {
             const idsToFetch = coinsToFetch.join(',');
-            const requestUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${idsToFetch}&vs_currencies=usd`;
-            console.log(`--- Making CoinGecko API Request: ${requestUrl} ---`); // ADDED LOGGING
+            // --- THE FIX: Switched to the free and reliable CoinCap API ---
+            const requestUrl = `https://api.coincap.io/v2/assets?ids=${idsToFetch}`;
+            
+            console.log(`--- Making CoinCap API Request: ${requestUrl} ---`);
 
             try {
-                const coingeckoResponse = await axios.get(requestUrl);
-                const fetchedPrices = coingeckoResponse.data;
-                console.log("--- CoinGecko API Response Received ---", fetchedPrices); // ADDED LOGGING
+                const coincapResponse = await axios.get(requestUrl);
+                const fetchedAssets = coincapResponse.data.data; // The assets are in the 'data' array
 
-                // 3. Update cache and merge with other live prices
-                for (const coinId of coinsToFetch) {
-                    if (fetchedPrices[coinId]) {
-                        const priceData = { usd: fetchedPrices[coinId].usd };
-                        priceCache.set(coinId, { timestamp: Date.now(), data: priceData });
-                        livePrices[coinId] = priceData;
-                    }
+                // 3. Update cache and build our price map
+                for (const asset of fetchedAssets) {
+                    const priceData = { usd: parseFloat(asset.priceUsd) };
+                    priceCache.set(asset.id, { timestamp: Date.now(), data: priceData });
+                    livePrices[asset.id] = priceData;
                 }
             } catch (apiError) {
-                // ADDED DETAILED LOGGING
-                // If the API call fails, log the full error to see the status code (e.g., 429)
-                console.error("--- CoinGecko API Error ---", { 
+                console.error("--- CoinCap API Error ---", { 
                     message: apiError.message, 
                     status: apiError.response?.status,
-                    data: apiError.response?.data 
                 });
             }
         }
@@ -87,23 +84,19 @@ const getPortfolio = async (req, res) => {
 };
 
 const addHolding = async (req, res) => {
-    // --- ADDED SAFETY CHECK ---
     const userId = req.user?.userId;
     if (!userId) {
         return res.status(401).json({ success: false, message: 'Invalid token payload.' });
     }
-
     const { coinId, quantity, buyPrice } = req.body;
-
     if (!coinId || !quantity || buyPrice === undefined) {
         return res.status(400).json({ success: false, message: 'Missing required fields.' });
     }
-
     try {
         const newHolding = await prisma.holding.create({
             data: {
                 userId: userId,
-                coinId: coinId,
+                coinId: coinId.toLowerCase(),
                 quantity: parseFloat(quantity),
                 buyPrice: parseFloat(buyPrice),
             },
@@ -116,24 +109,19 @@ const addHolding = async (req, res) => {
 };
 
 const deleteHolding = async (req, res) => {
-    // --- ADDED SAFETY CHECK ---
     const userId = req.user?.userId;
     if (!userId) {
         return res.status(401).json({ success: false, message: 'Invalid token payload.' });
     }
-
     const { id: holdingId } = req.params;
-
     try {
         const holding = await prisma.holding.findUnique({ where: { id: holdingId } });
-
         if (!holding) {
             return res.status(404).json({ success: false, message: 'Holding not found.' });
         }
         if (holding.userId !== userId) {
             return res.status(403).json({ success: false, message: 'Unauthorized.' });
         }
-
         await prisma.holding.delete({ where: { id: holdingId } });
         res.status(200).json({ success: true, message: 'Holding deleted.' });
     } catch (error) {
