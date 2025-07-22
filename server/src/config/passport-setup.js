@@ -16,21 +16,16 @@ passport.use(
         const name = profile.displayName;
         const avatarUrl = profile.photos[0].value;
 
-        // Use `upsert` to find a user or create/update them in one go.
-        // This is more efficient than finding and then creating.
         const user = await prisma.user.upsert({
           where: { email: email },
           update: {
-            // If user exists, update their name and avatar from Google
             name: name,
             avatarUrl: avatarUrl,
           },
           create: {
-            // If user does not exist, create them with all the details
             email: email,
             name: name,
             avatarUrl: avatarUrl,
-            // password will be null, as configured in the schema
           },
         });
         
@@ -41,3 +36,4 @@ passport.use(
     }
   )
 );
+
