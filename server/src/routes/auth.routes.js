@@ -20,7 +20,7 @@ router.get(
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     
     // Redirect the user back to the frontend dashboard with the token
-    res.redirect(`http://localhost:3000/dashboard?token=${token}`);
+    res.redirect(`https://crypto-conic.vercel.app/dashboard?token=${token}`);
   }
 );
 
