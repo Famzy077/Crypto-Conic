@@ -1,9 +1,13 @@
+
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const axios = require('axios');
 
+// --- THE FIX: Caching Layer ---
+// In-memory cache to store coin prices. In a larger application, you might use Redis.
 const priceCache = new Map();
-const CACHE_DURATION_MS = 2 * 60 * 1000; // Cache prices for 2 minutes
+// Increased cache duration to 5 minutes to better handle API rate limits.
+const CACHE_DURATION_MS = 5 * 60 * 1000; 
 
 const getPortfolio = async (req, res) => {
     const userId = req.user?.userId;
@@ -55,6 +59,8 @@ const getPortfolio = async (req, res) => {
                     }
                 }
             } catch (apiError) {
+                // ADDED DETAILED LOGGING
+                // If the API call fails, log the full error to see the status code (e.g., 429)
                 console.error("--- CoinGecko API Error ---", { 
                     message: apiError.message, 
                     status: apiError.response?.status,
