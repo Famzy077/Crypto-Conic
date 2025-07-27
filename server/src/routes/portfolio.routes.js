@@ -1,6 +1,6 @@
 
 const express = require('express');
-const { getPortfolio, addHolding } = require('../controllers/portfolio.controller');
+const { getPortfolio, addHolding, deleteHolding } = require('../controllers/portfolio.controller');
 const { verifyToken } = require('../middleware/authMiddleware');
 const router = express.Router();
 
@@ -9,5 +9,6 @@ router.use(verifyToken);
 
 router.get('/', getPortfolio);
 router.post('/holdings', addHolding);
+router.delete('/holdings/:id', deleteHolding);
 
 module.exports = router;
