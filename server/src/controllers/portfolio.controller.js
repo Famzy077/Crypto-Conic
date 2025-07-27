@@ -27,25 +27,25 @@ const getPortfolio = async (req, res) => {
 
         // 1. Check if the cache is still valid
         if (Date.now() - priceCache.timestamp > CACHE_DURATION_MS) {
-            console.log('--- Cache expired. Attempting to fetch all assets from CoinCap API. ---');
+            console.log('--- Cache expired. Attempting to fetch prices from CoinGecko API. ---');
             try {
-                const requestUrl = `https://api.coincap.io/v2/assets`;
-                const coincapResponse = await axios.get(requestUrl);
-                const fetchedAssets = coincapResponse.data.data;
+                const uniqueCoinIds = [...new Set(userHoldings.map(h => h.coinId.toLowerCase()))];
+                const idsToFetch = uniqueCoinIds.join(',');
+                const requestUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${idsToFetch}&vs_currencies=usd`;
+                
+                const coingeckoResponse = await axios.get(requestUrl);
+                const fetchedPrices = coingeckoResponse.data;
 
-                // If the API call is successful, clear the old cache and update it.
-                const newPriceData = new Map();
-                for (const asset of fetchedAssets) {
-                    newPriceData.set(asset.id, { usd: parseFloat(asset.priceUsd) });
+                // If the API call is successful, update the cache.
+                priceCache.data.clear();
+                for (const coinId in fetchedPrices) {
+                    priceCache.data.set(coinId, { usd: fetchedPrices[coinId].usd });
                 }
-
-                priceCache.data = newPriceData;
                 priceCache.timestamp = Date.now();
-                console.log(`--- Cache updated successfully with ${priceCache.data.size} assets. ---`);
+                console.log(`--- Cache updated successfully with ${priceCache.data.size} assets from CoinGecko. ---`);
 
             } catch (apiError) {
-                // If the API call fails, log the error but DO NOT clear the old cache.
-                console.error("--- CoinCap API Error: Failed to refresh cache. Using stale data if available. ---", { 
+                console.error("--- CoinGecko API Error: Failed to refresh cache. Using stale data if available. ---", { 
                     message: apiError.message, 
                     status: apiError.response?.status,
                 });
@@ -86,7 +86,6 @@ const addHolding = async (req, res) => {
         const newHolding = await prisma.holding.create({
             data: {
                 userId: userId,
-                // Always save the coinId as lowercase to be consistent
                 coinId: coinId.toLowerCase(),
                 quantity: parseFloat(quantity),
                 buyPrice: parseFloat(buyPrice),
@@ -101,19 +100,32 @@ const addHolding = async (req, res) => {
 
 const deleteHolding = async (req, res) => {
     const userId = req.user?.userId;
+    const { id: holdingId } = req.params;
+
+    // --- THE FIX: Added detailed logging for debugging ---
+    console.log(`--- Attempting to delete holding. UserID: ${userId}, HoldingID: ${holdingId} ---`);
+
     if (!userId) {
         return res.status(401).json({ success: false, message: 'Invalid token payload.' });
     }
-    const { id: holdingId } = req.params;
+    if (!holdingId) {
+        return res.status(400).json({ success: false, message: 'Holding ID is required.' });
+    }
+
     try {
         const holding = await prisma.holding.findUnique({ where: { id: holdingId } });
+
         if (!holding) {
+            console.log(`--- Delete Error: Holding with ID ${holdingId} not found. ---`);
             return res.status(404).json({ success: false, message: 'Holding not found.' });
         }
         if (holding.userId !== userId) {
+            console.log(`--- Delete Error: Unauthorized. User ${userId} tried to delete holding belonging to ${holding.userId}. ---`);
             return res.status(403).json({ success: false, message: 'Unauthorized.' });
         }
+
         await prisma.holding.delete({ where: { id: holdingId } });
+        console.log(`--- Holding ${holdingId} deleted successfully. ---`);
         res.status(200).json({ success: true, message: 'Holding deleted.' });
     } catch (error) {
         console.error("--- Delete Holding Error ---", error);
