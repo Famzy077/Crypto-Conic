@@ -13,7 +13,6 @@ router.get(
   '/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: '/login' }),
   (req, res) => {
-    // At this point, `req.user` is the user object from our database
     const user = req.user;
     
     // Create our application's JWT

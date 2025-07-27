@@ -7,7 +7,7 @@ const priceCache = {
     timestamp: 0,
     data: new Map(),
 };
-const CACHE_DURATION_MS = 5 * 60 * 1000; // Cache prices for 5 minutes
+const CACHE_DURATION_MS = 5 * 60 * 1000; 
 
 const getPortfolio = async (req, res) => {
     const userId = req.user?.userId;
@@ -53,6 +53,7 @@ const getPortfolio = async (req, res) => {
 
         // 2. Enrich the portfolio with the combined price data from our cache
         const enrichedPortfolio = userHoldings.map(holding => {
+            // --- THE FIX ---
             // Convert the stored coinId to lowercase before looking it up in the cache.
             // This ensures "Bitcoin" matches the cache key "bitcoin".
             const livePriceData = priceCache.data.get(holding.coinId.toLowerCase());

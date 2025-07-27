@@ -119,7 +119,7 @@ const LoginPage = () => {
           </button>
 
           <a href={`${API_URL}/api/auth/google`}>
-            <div className='border py-1 rounded transition duration-300 mt-3 flex items-center justify-center hover:bg-gray-700'>
+            <div className='border border-blue-500 py-1 rounded transition duration-300 mt-3 flex items-center justify-center hover:bg-gray-700'>
               <Image 
                 className='h-10 w-10' 
                 src={GoogleImg} alt='google-icon' 

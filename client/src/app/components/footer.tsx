@@ -28,9 +28,9 @@ const Footers = () => {
           <div>
             <h3 className="text-lg font-bold text-white mb-4">Follow Us</h3>
             <div className="flex justify-center md:justify-start space-x-4">
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaTwitter size={24} /></a>
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaGithub size={24} /></a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaLinkedin size={24} /></a>
+              <a href="https://x.com/famzy_Tech" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaTwitter size={24} /></a>
+              <a href="https://github.com/Famzy077" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaGithub size={24} /></a>
+              <a href="http://www.linkedin.com/in/akinola-femi077" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaLinkedin size={24} /></a>
             </div>
           </div>
         </div>
