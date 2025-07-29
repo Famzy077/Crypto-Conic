@@ -12,7 +12,7 @@ const verifyToken = (req, res, next) => {
         if(err) {
             return res.status(401).json({success: false, message: 'Invalid token'});
         }
-        // Attach the decoded user payload (e.g., { userId: '...' }) to the request object
+        // Attach the decoded user payload ({ userId: '...' }) to the request object
         req.user = decoded;
         next();
     })

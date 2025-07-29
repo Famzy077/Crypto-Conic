@@ -5,17 +5,17 @@ const passport = require('passport');
 const {  verifyToken  } = require('../middleware/authMiddleware');
 const jwt = require('jsonwebtoken');
 
-// 1. The route to start the Google login process
+// The route to start the Google login process
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// 2. The callback route that Google redirects to
+// The callback route that Google redirects to
 router.get(
   '/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: '/login' }),
   (req, res) => {
     const user = req.user;
     
-    // Create our application's JWT
+    // Create my application's JWT
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     
     // Redirect the user back to the frontend dashboard with the token
