@@ -1,8 +1,7 @@
-import { FaSpinner } from 'react-icons/fa';
 import { NewsArticle } from '@/app/lib/coingecko';
 import Image from 'next/image';
 
-// --- A component for the loading skeleton ---
+// A component for the loading skeleton
 export const NewsSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {[...Array(6)].map((_, i) => (
@@ -18,7 +17,7 @@ export const NewsSkeleton = () => (
     </div>
 );
 
-// --- A reusable component for a single News Article Card (Updated for CoinDesk) ---
+// A reusable component for a single News Article Card (Updated for CoinDesk)
 export const NewsArticleCard = ({ article }: { article: NewsArticle }) => (
     <a 
         href={article.url} 
@@ -37,7 +36,7 @@ export const NewsArticleCard = ({ article }: { article: NewsArticle }) => (
         </div>
         <div className="p-4">
             <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">{article.source.name}</p>
-            <h3 className="font-bold text-lg text-gray-800 dark:text-white mt-1 max-sm:h-fit place-content-center h-fit overflow-hidden">{article.title}</h3>
+            <h3 className="font-bold max-sm:font-normal text-lg max-sm:text-sm text-gray-800 dark:text-white mt-1 max-sm:h-fit place-content-center h-fit overflow-hidden">{article.title}</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 overflow-hidden">{article.summary}</p>
         </div>
     </a>

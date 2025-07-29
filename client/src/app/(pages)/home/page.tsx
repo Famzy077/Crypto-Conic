@@ -88,8 +88,8 @@ const HomePage = () => {
 
     return (
         <main className="bg-gray-50 mt-18 max-sm:mt-14 pt-5  dark:bg-gray-900 min-h-screen">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-2">
-                <div className="text-center mb-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-5 pt-2">
+                <div className="text-center mb-5">
                     <h1 className="text-4xl max-sm:text-2xl md:text-5xl font-bold text-gray-800 dark:text-white">Crypto Market Overview</h1>
                     <p className="text-lg max-sm:text-sm text-gray-500 dark:text-gray-400 mt-2">
                         Live prices for the top cryptocurrencies.
@@ -114,7 +114,7 @@ const HomePage = () => {
                         </div>
 
                         {/* --- The "Load More" Button --- */}
-                        <div className="flex justify-center mt-12">
+                        <div className="flex justify-center mt-7">
                             {hasNextPage && (
                                 <Button
                                     onClick={() => fetchNextPage()}
