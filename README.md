@@ -1,4 +1,5 @@
-#Cr yptoCronic - Full-Stack Portfolio Tracker
+# CryptoCronic - Full-Stack Portfolio Tracker
+# <b>CryptoCronic: </b> <a href="https://crypto-conic.vercel.app/">Live Demo 🔗</a>
 CryptoCronic is a modern, full-stack web application designed to help cryptocurrency enthusiasts track their investments, view real-time market data, and stay updated with the latest news in the crypto space.
 
 This application features a public-facing section for general market data and a private, secure dashboard for personalized portfolio management.
@@ -14,7 +15,7 @@ Crypto News Feed: A dedicated page displaying the latest news from the world of 
 
 Secure User Authentication: Users can register and log in using a traditional email/password system or through a secure Google OAuth 2.0 flow. Authentication is handled with JSON Web Tokens (JWT).
 
-#Personalized Portfolio Management:
+# Personalized Portfolio Management:
 
 Authenticated users can add their crypto holdings (e.g., "I own 0.5 BTC at a buy price of $30,000").
 
@@ -26,10 +27,10 @@ Holdings can be easily deleted.
 
 Personal Profile: Users can view their profile information, including their name and avatar, which is automatically fetched when signing in with Google.
 
-🛠️ Tech Stack
+# 🛠️ Tech Stack
 This project is a full-stack application built with a modern, robust, and scalable technology stack.
 
-Frontend (Client)
+# Frontend (Client)
 Framework: Next.js (with App Router)
 
 Language: TypeScript
@@ -46,7 +47,7 @@ Form Validation: Yup
 
 Notifications: React Hot Toast
 
-Backend (Server)
+# Backend (Server)
 Framework: Node.js & Express.js
 
 Language: JavaScript
@@ -59,13 +60,12 @@ Authentication: JSON Web Tokens (JWT), Passport.js for Google OAuth
 
 Password Hashing: Bcrypt.js
 
-🚀 Getting Started
+# 🚀 Getting Started
 To get a local copy up and running, follow these simple steps.
 
 Prerequisites
-Node.js (v18 or later)
-
-npm or yarn
+``Node.js (v18 or later)``
+``npm or yarn``
 
 A PostgreSQL database (you can set one up for free on Neon)
 
