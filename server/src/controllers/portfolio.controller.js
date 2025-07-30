@@ -14,7 +14,7 @@ const fetchPricesFromCoinGecko = async (coinIds) => {
     try {
         const idsToFetch = coinIds.join(',');
         const requestUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${idsToFetch}&vs_currencies=usd`;
-        console.log(`--- Attempting to fetch from CoinGecko: ${requestUrl} ---`);
+        // console.log(`--- Attempting to fetch from CoinGecko: ${requestUrl} ---`);
         const response = await axios.get(requestUrl);
         const prices = new Map();
         for (const coinId in response.data) {
@@ -32,13 +32,13 @@ const fetchPricesFromCoinGecko = async (coinIds) => {
 const fetchPricesFromCoinCap = async () => {
     try {
         const requestUrl = `https://api.coincap.io/v2/assets`;
-        console.log(`--- CoinGecko failed. Attempting backup fetch from CoinCap: ${requestUrl} ---`);
+        // console.log(`--- CoinGecko failed. Attempting backup fetch from CoinCap: ${requestUrl} ---`);
         const response = await axios.get(requestUrl);
         const prices = new Map();
         for (const asset of response.data.data) {
             prices.set(asset.id, { usd: parseFloat(asset.priceUsd) });
         }
-        console.log('--- Successfully fetched prices from CoinCap backup. ---');
+        // console.log('--- Successfully fetched prices from CoinCap backup. ---');
         return prices;
     } catch (error) {
         console.error("--- CoinCap API failed ---", { message: error.message });
